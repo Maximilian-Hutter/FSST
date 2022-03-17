@@ -6,16 +6,18 @@
 
 gpio::gpio(QObject *parent) : QObject(parent)
 {
+    int error = 0;
     m_handle = lgGpiochipOpen(CHIP); // get a handle to the GPIO
     if (m_handle < 0)
-        throw "Cannot open chip: CHIP" + QString::number(CHIP);
+        throw lguErrorText(m_handle);
+     // throw "Cannot open chip: CHIP" + QString::number(CHIP);
     int init_level = 0;
     for (auto pin : LEDS) // Outputs
-        if (lgGpioClaimOutput(m_handle, LFLAGS, pin, init_level) < 0)
-            throw QString("Cannot claim output");
+        if ((error = lgGpioClaimOutput(m_handle, LFLAGS, pin, init_level)) < 0)
+            throw lguErrorText(error);
     for (auto pin : BUTTONS) // Inputs
-        if (lgGpioClaimInput(m_handle, LFLAGS, pin) < 0)
-            throw QString("Cannot claim input");
+        if ((error = lgGpioClaimInput(m_handle, LFLAGS, pin)) < 0)
+            throw lguErrorText(error);
 }
 
 gpio::~gpio()
@@ -48,5 +50,8 @@ void gpio::set(unsigned int pattern)
 // Read pin state
 bool gpio::get(int pin)
 {
-    return lgGpioRead(m_handle, pin);
+    int state = lgGpioRead(m_handle, pin);
+    if (state <0)
+        throw lguErrorText(state);
+    return state;
 }

@@ -1,6 +1,7 @@
 #include "config.h"
 #include "widget.h"
 #include <QGridLayout>
+#include <QLCDNumber>
 #include <QDebug>
 
 Widget::Widget(QWidget *parent)

@@ -1,6 +1,7 @@
 #include "widget.h"
 #include <QApplication>
 #include <QDebug>
+#include <QMessageBox>
 
 int main(int argc, char *argv[])
 {
@@ -10,8 +11,13 @@ int main(int argc, char *argv[])
         w.show();
         return a.exec();
     }
-    catch (const QString msg) {
-        qDebug() << msg;
-        return 1;
+    catch(const char* msg) {
+        QMessageBox msgBox;
+        msgBox.setText(msg);
+        msgBox.exec();
+
+        // qDebug() << msg;
+        a.quit();
     }
+    return a.exec();
 }
